@@ -6,6 +6,7 @@ import (
 	"golang.org/x/sys/windows"
 	"runtime"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -72,5 +73,32 @@ func PumpWaitingMessages() int32 {
 		ole.DispatchMessage(&msg)
 	}
 	runtime.UnlockOSThread()
+	return ret
+}
+
+func DateToUInt(date time.Time) uint64 {
+	year, month, day := date.Date()
+	return uint64(year*1_00_00 + int(month)*1_00 + day)
+}
+
+func UIntToDate(value uint64) time.Time {
+	return time.Date(
+		int(value/1_00_00),
+		time.Month(value/100%100),
+		int(value%100),
+		0, 0, 0, 0,
+		time.Local,
+	)
+}
+
+func VarToDate(value *ole.VARIANT) time.Time {
+	return UIntToDate(ToUInt64(value))
+}
+
+func CastSlice[T any](vArray []*ole.VARIANT, cast func(*ole.VARIANT) T) []T {
+	ret := make([]T, len(vArray))
+	for idx := 0; idx < len(ret); idx++ {
+		ret[idx] = cast(vArray[idx])
+	}
 	return ret
 }

@@ -82,80 +82,78 @@ func (t *CpTrait) Release() {
 func createICpEvent(host *CpTrait) *ICpEvent {
 	event := new(ICpEvent)
 	event.vTable = new(ICpEventVTable)
-	event.vTable.pQueryInterface = syscall.NewCallback(dispQueryInterface)
-	event.vTable.pAddRef = syscall.NewCallback(dispAddRef)
-	event.vTable.pRelease = syscall.NewCallback(dispRelease)
-	event.vTable.pGetTypeInfoCount = syscall.NewCallback(dispGetTypeInfoCount)
-	event.vTable.pGetTypeInfo = syscall.NewCallback(dispGetTypeInfo)
-	event.vTable.pGetIDsOfNames = syscall.NewCallback(dispGetIDsOfNames)
-	event.vTable.pInvoke = syscall.NewCallback(dispInvoke)
+	event.vTable.pQueryInterface = syscall.NewCallback(eQueryInterface)
+	event.vTable.pAddRef = syscall.NewCallback(eAddRef)
+	event.vTable.pRelease = syscall.NewCallback(eRelease)
+	event.vTable.pGetTypeInfoCount = syscall.NewCallback(eGetTypeInfoCount)
+	event.vTable.pGetTypeInfo = syscall.NewCallback(eGetTypeInfo)
+	event.vTable.pGetIDsOfNames = syscall.NewCallback(eGetIDsOfNames)
+	event.vTable.pInvoke = syscall.NewCallback(eInvoke)
 	event.host = host
 	return event
 }
 
 // 이하 콜백 이벤트 바인딩하기 위한 함수 선언들
-func dispQueryInterface(this *ole.IUnknown, iid *ole.GUID, punk **ole.IUnknown) uint32 {
+func eQueryInterface(eUnknown *ole.IUnknown, iid *ole.GUID, punk **ole.IUnknown) uint32 {
 	*punk = nil
+
 	if ole.IsEqualGUID(iid, ole.IID_IUnknown) ||
 		ole.IsEqualGUID(iid, ole.IID_IDispatch) ||
 		ole.IsEqualGUID(iid, IID_DibEvents) {
-		dispAddRef(this)
-		*punk = this
+		eAddRef(eUnknown)
+		*punk = eUnknown
 		return ole.S_OK
 	}
 
 	return ole.E_NOINTERFACE
 }
 
-func dispAddRef(this *ole.IUnknown) int32 {
-	pthis := (*ICpEvent)(unsafe.Pointer(this))
-	pthis.ref++
-	return pthis.ref
+func eAddRef(eUnknown *ole.IUnknown) int32 {
+	event := (*ICpEvent)(unsafe.Pointer(eUnknown))
+	event.ref++
+	return event.ref
 }
 
-func dispRelease(this *ole.IUnknown) int32 {
-	pthis := (*ICpEvent)(unsafe.Pointer(this))
-	pthis.ref--
-	return pthis.ref
+func eRelease(eUnknown *ole.IUnknown) int32 {
+	event := (*ICpEvent)(unsafe.Pointer(eUnknown))
+	event.ref--
+	return event.ref
 }
 
-func dispGetIDsOfNames(args *uintptr) uint32 {
+func eGetIDsOfNames(args *uintptr) uint32 {
 	p := (*[6]int32)(unsafe.Pointer(args))
 	//this := (*ole.IDispatch)(unsafe.Pointer(uintptr(p[0])))
 	//iid := (*ole.GUID)(unsafe.Pointer(uintptr(p[1])))
 
 	// wnames := *(*[]*uint16)(unsafe.Pointer(uintptr(p[2])))
-	namelen := int(uintptr(p[3]))
+	nameLen := int(uintptr(p[3]))
 	//lcid := int(uintptr(p[4]))
 	pdisp := *(*[]int32)(unsafe.Pointer(uintptr(p[5])))
-	for n := 0; n < namelen; n++ {
+	for n := 0; n < nameLen; n++ {
 		pdisp[n] = int32(n)
 	}
 	return ole.S_OK
 }
 
-func dispGetTypeInfoCount(_ *ole.IUnknown, pcount *int) uint32 {
-	if pcount != nil {
-		*pcount = 0
+func eGetTypeInfoCount(_ *ole.IUnknown, pCount *int) uint32 {
+	if pCount != nil {
+		*pCount = 0
 	}
 	return ole.S_OK
 }
 
-func dispGetTypeInfo(_ *ole.IUnknown, _ int, _ int) uint32 {
+func eGetTypeInfo(_ *ole.IUnknown, _ int, _ int) uint32 {
 	return ole.E_NOTIMPL
 }
 
-func dispInvoke(this *ole.IDispatch, dispid int, _ *ole.GUID, _ int, _ int16, _ *ole.DISPPARAMS, _ *ole.VARIANT, _ *ole.EXCEPINFO, _ *uint) uintptr {
-	pthis := (*ICpEvent)(unsafe.Pointer(this))
-	if dispid == 1 {
-		// 이벤트는 Received 한개뿐이다.
-		if pthis.host.callback != nil {
-			// instance callback
-			pthis.host.callback.Received(pthis.host)
-			return ole.S_OK
-		}
+func eInvoke(eDispatch *ole.IDispatch, dispatchID int, _ *ole.GUID, _ int, _ int16, _ *ole.DISPPARAMS, _ *ole.VARIANT, _ *ole.EXCEPINFO, _ *uint) uintptr {
+	event := (*ICpEvent)(unsafe.Pointer(eDispatch))
+	if dispatchID != 1 || event.host.callback == nil {
+		return ole.E_NOTIMPL
 	}
-	return ole.E_NOTIMPL
+
+	event.host.callback.Received(event.host)
+	return ole.S_OK
 }
 
 func GetEventIID(name string) *ole.GUID {
@@ -272,4 +270,14 @@ func (t *CpTrait) Header() *ole.VARIANT {
 
 func (t *CpTrait) Data() *ole.VARIANT {
 	return t.Object.MustGet("Data")
+}
+
+// Convenient Api
+
+func (t *CpTrait) GetDataArray(dType int32, total int32) []*ole.VARIANT {
+	ret := make([]*ole.VARIANT, total)
+	for idx := int32(0); idx < total; idx++ {
+		ret[idx] = t.GetDataValue(dType, idx)
+	}
+	return ret
 }
