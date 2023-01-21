@@ -6,42 +6,33 @@ import (
 	"time"
 )
 
-type MstReceiver struct {
-	t *testing.T
-}
-
-func (r *MstReceiver) Received(c *CpTrait) {
-	fmt.Println("Received: " + time.Now().String())
-	fmt.Println(c.GetHeaderValue(1))
-}
-
-func TestCpMst(t *testing.T) {
-	InitCOM()
-	defer ReleaseCOM()
-
-	mst := CpTrait{}
-	err := mst.Create("Dscbo1.StockMst")
-	if err != nil {
-		panic(err)
-	}
-	mst.BindEvent(&MstReceiver{t})
-
-	mst.SetInputValue(0, "A005930")
-	mst.Request()
-	fmt.Println("Request: " + time.Now().String())
-
-	for {
-		PumpWaitingMessages()
-	}
-}
-
 type CurReceiver struct {
 	t *testing.T
+	c *CpStockCur
 }
 
-func (r *CurReceiver) Received(c *CpTrait) {
-	fmt.Println("Received: " + time.Now().String())
-	fmt.Println(c.GetHeaderValue(1))
+func (r *CurReceiver) Received() {
+	fmt.Printf(
+		"[%s] Received: %s %s %v %v price {%v, %v, %v, %v[%v], %v[%v]} total {%v +%v -%v %v} bidding {+%v -%v}",
+		time.Now().Format(time.RFC3339),
+		ToStr(r.c.GetHeaderValue(StockCurHeaderCode)),
+		ToStr(r.c.GetHeaderValue(StockCurHeaderName)),
+		ToTimeHM(r.c.GetHeaderValue(StockCurHeaderTime)),
+		ToTimeHMS(r.c.GetHeaderValue(StockCurHeaderSecond)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderOpen)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderHigh)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderLow)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderClose)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderDelta)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolume)),
+		ToConclusionType(r.c.GetHeaderValue(StockCurHeaderConclusionType)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderAccVolume)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderAccBuy)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderAccSell)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderAccValue)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderBuyBidding)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderSellBidding)),
+	)
 }
 
 func TestCpStockCur(t *testing.T) {
@@ -50,10 +41,14 @@ func TestCpStockCur(t *testing.T) {
 
 	cur := CpStockCur{}
 	cur.Create()
-	cur.BindEvent(&CurReceiver{t})
+	cur.BindEvent(&CurReceiver{t, &cur})
 
 	cur.SetInputValue(0, "A005930")
 	cur.Subscribe()
 
-	t.Log(PumpWaitingMessages())
+	t.Log("Start Subscribing\n")
+
+	for {
+		PumpWaitingMessages()
+	}
 }

@@ -3,6 +3,10 @@ package gocybos
 import "github.com/go-ole/go-ole"
 
 func Stock(stockCode string) string {
+	if stockCode[0] == 'A' {
+		return stockCode
+	}
+
 	return "A" + stockCode
 }
 
@@ -33,4 +37,8 @@ func ToInt64(r *ole.VARIANT) int64 {
 
 func ToUInt64(r *ole.VARIANT) uint64 {
 	return uint64(r.Val)
+}
+
+func ToRune(r *ole.VARIANT) rune {
+	return rune(r.Val)
 }

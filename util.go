@@ -91,8 +91,35 @@ func UIntToDate(value uint64) time.Time {
 	)
 }
 
-func VarToDate(value *ole.VARIANT) time.Time {
+func UIntToTimeHM(value uint64) time.Time {
+	return time.Date(
+		1, time.Month(1), 1,
+		int(value/1_00),
+		int(value%1_00),
+		0, 0, time.Local,
+	)
+}
+
+func UIntToTimeHMS(value uint64) time.Time {
+	return time.Date(
+		1, time.Month(1), 1,
+		int(value/1_00_00),
+		int(value/1_00%1_00),
+		int(value%1_00),
+		0, time.Local,
+	)
+}
+
+func ToDate(value *ole.VARIANT) time.Time {
 	return UIntToDate(ToUInt64(value))
+}
+
+func ToTimeHM(value *ole.VARIANT) time.Time {
+	return UIntToTimeHM(ToUInt64(value))
+}
+
+func ToTimeHMS(value *ole.VARIANT) time.Time {
+	return UIntToTimeHMS(ToUInt64(value))
 }
 
 func CastSlice[T any](vArray []*ole.VARIANT, cast func(*ole.VARIANT) T) []T {

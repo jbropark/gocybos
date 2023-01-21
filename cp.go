@@ -24,7 +24,7 @@ type CpTrait struct {
 }
 
 type CpReceiver interface {
-	Received(*CpTrait)
+	Received()
 }
 
 type ICpEvent struct {
@@ -152,7 +152,7 @@ func eInvoke(eDispatch *ole.IDispatch, dispatchID int, _ *ole.GUID, _ int, _ int
 		return ole.E_NOTIMPL
 	}
 
-	event.host.callback.Received(event.host)
+	event.host.callback.Received()
 	return ole.S_OK
 }
 

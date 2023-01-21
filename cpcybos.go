@@ -6,6 +6,14 @@ type CpCybos struct {
 	CpTrait
 }
 
+type LimitType int16
+
+const (
+	LimitTypeTradeRequest LimitType = iota
+	LimitTypeNonTradeRequest
+	LimitTypeSubscribe
+)
+
 func (c *CpCybos) Create() {
 	err := c.CpTrait.Create("CpUtil.CpCybos")
 	if err != nil {
@@ -25,12 +33,12 @@ func (c *CpCybos) LimitRequestRemainTime() *ole.VARIANT {
 	return c.Object.MustGet("LimitRequestRemainTime")
 }
 
-func (c *CpCybos) GetLimitRemainCount(limitType int16) *ole.VARIANT {
-	return c.Object.MustCall("GetLimitRemainCount", limitType)
+func (c *CpCybos) GetLimitRemainCount(limitType LimitType) *ole.VARIANT {
+	return c.Object.MustCall("GetLimitRemainCount", int16(limitType))
 }
 
-func (c *CpCybos) GetLimitRemainTime(limitType int16) *ole.VARIANT {
-	return c.Object.MustCall("GetLimitRemainTime", limitType)
+func (c *CpCybos) GetLimitRemainTime(limitType LimitType) *ole.VARIANT {
+	return c.Object.MustCall("GetLimitRemainTime", int16(limitType))
 }
 
 func (c *CpCybos) PlusDisconnect() {

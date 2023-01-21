@@ -131,6 +131,46 @@ func (c *CpStockChart) GetHeaderValue(hType StockChartHeaderType) *ole.VARIANT {
 	return c.CpTrait.GetHeaderValue(int32(hType))
 }
 
+func (c *CpStockChart) SetInputCode(stockCode string) {
+	c.SetInputValue(stockChartInputCode, Stock(stockCode))
+}
+
+func (c *CpStockChart) SetInputCountType(countType StockChartCountType) {
+	c.SetInputValue(stockChartInputCountType, rune(countType))
+}
+
+func (c *CpStockChart) SetInputDateStart(date time.Time) {
+	c.SetInputValue(stockChartInputDateStart, DateToUInt(date))
+}
+
+func (c *CpStockChart) SetInputDateEnd(date time.Time) {
+	c.SetInputValue(stockChartInputDateEnd, DateToUInt(date))
+}
+
+func (c *CpStockChart) SetInputCount(count uint64) {
+	c.SetInputValue(stockChartInputCount, count)
+}
+
+func (c *CpStockChart) SetInputDataType(dataType StockChartDataType) {
+	c.SetInputValue(stockChartInputDataType, rune(dataType))
+}
+
+func (c *CpStockChart) SetInputPeriod(period uint16) {
+	c.SetInputValue(stockChartInputPeriod, period)
+}
+
+func (c *CpStockChart) SetInputGapType(gapType StockChartGapType) {
+	c.SetInputValue(stockChartInputGapType, rune(gapType))
+}
+
+func (c *CpStockChart) SetInputPriceType(priceType StockChartPriceType) {
+	c.SetInputValue(stockChartInputPriceType, rune(priceType))
+}
+
+func (c *CpStockChart) SetInputVolumeType(volumeType StockChartVolumeType) {
+	c.SetInputValue(stockChartInputVolumeType, rune(volumeType))
+}
+
 func (c *CpStockChart) SetInputValues(
 	stockCode string,
 	countType StockChartCountType,
