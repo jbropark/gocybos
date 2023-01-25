@@ -70,14 +70,14 @@ const (
 	StockChartFieldHigh
 	StockChartFieldLow
 	StockChartFieldClose
-	StockChartFieldDelta
+	StockChartFieldPriceDelta
 	StockChartFieldVolume StockChartField = 1 + iota
 	StockChartFieldValue
-	StockChartFieldAccSell // 호가 방식
-	StockChartFieldAccBuy  // 호가 방식
+	StockChartFieldCmlVolumeSell // 호가 방식
+	StockChartFieldCmlVolumeBuy  // 호가 방식
 	StockChartFieldListedNum
 	StockChartFieldMarketCap
-	StockChartFieldDeltaSign = 37
+	StockChartFieldPriceDeltaSign = 37
 )
 
 type StockChartHeaderType int32
@@ -91,22 +91,22 @@ const (
 	StockChartHeaderLastTradeDay                              //ulong
 	StockChartHeaderPrevClose
 	StockChartHeaderCurrentPrice
-	StockChartHeaderDeltaCode
-	StockChartHeaderDelta
+	StockChartHeaderPriceDeltaType
+	StockChartHeaderPriceDelta
 	StockChartHeaderVolume
-	StockChartHeaderSellBidding
-	StockChartHeaderBuyBidding
+	StockChartHeaderAskPrice
+	StockChartHeaderBidPrice
 	StockChartHeaderOpen
 	StockChartHeaderHigh
 	StockChartHeaderLow
 	StockChartHeaderValue
 	StockChartHeaderStatus
 	StockChartHeaderListedNum
-	StockChartHeaderCapital
-	StockChartHeaderPrevTransaction
-	StockChartHeaderLastUpdateTime
-	StockChartHeaderUpperBoundPrice
-	StockChartHeaderLowerBoundPrice
+	StockChartHeaderCapital // 자본금
+	StockChartHeaderPrevVolume
+	StockChartHeaderLastUpdateTimeHM
+	StockChartHeaderMaxPrice
+	StockChartHeaderMinPrice
 )
 
 type CpStockChart struct {
@@ -168,29 +168,5 @@ func (c *CpStockChart) SetInputPriceType(priceType StockChartPriceType) {
 }
 
 func (c *CpStockChart) SetInputVolumeType(volumeType StockChartVolumeType) {
-	c.SetInputValue(stockChartInputVolumeType, rune(volumeType))
-}
-
-func (c *CpStockChart) SetInputValues(
-	stockCode string,
-	countType StockChartCountType,
-	dateStart time.Time,
-	dateEnd time.Time,
-	count uint64,
-	dataType StockChartDataType,
-	period uint16,
-	gapType StockChartGapType,
-	priceType StockChartPriceType,
-	volumeType StockChartVolumeType,
-) {
-	c.SetInputValue(stockChartInputCode, Stock(stockCode))
-	c.SetInputValue(stockChartInputCountType, rune(countType))
-	c.SetInputValue(stockChartInputDateEnd, DateToUInt(dateEnd))
-	c.SetInputValue(stockChartInputDateStart, DateToUInt(dateStart))
-	c.SetInputValue(stockChartInputCount, count)
-	c.SetInputValue(stockChartInputDataType, rune(dataType))
-	c.SetInputValue(stockChartInputPeriod, period)
-	c.SetInputValue(stockChartInputGapType, rune(gapType))
-	c.SetInputValue(stockChartInputPriceType, rune(priceType))
 	c.SetInputValue(stockChartInputVolumeType, rune(volumeType))
 }

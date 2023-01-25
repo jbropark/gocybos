@@ -12,7 +12,7 @@ const (
 	StockCurHeaderCode StockCurHeaderType = iota
 	StockCurHeaderName
 	StockCurHeaderDelta
-	StockCurHeaderTimeMinute
+	StockCurHeaderTimeHM
 	StockCurHeaderOpen
 	StockCurHeaderHigh
 	StockCurHeaderLow
@@ -22,7 +22,7 @@ const (
 	StockCurHeaderCmlValue
 	StockCurHeaderClose  = iota + 2
 	StockCurHeaderVolume = iota + 5
-	StockCurHeaderTimeSecond
+	StockCurHeaderTimeHMS
 	StockCurHeaderPreMarketVolume = iota + 7
 	StockCurHeaderConclusionType  = iota + 11
 	StockCurHeaderCmlVolumeSell
