@@ -10,10 +10,6 @@ func TestIsUserAnAdmin(t *testing.T) {
 	t.Logf("IsAdmin: %v", v)
 }
 
-func bit(x, n int) bool {
-	return (x & n) == 0
-}
-
 func shift(x, n int) bool {
 	return (x >> n) == 0
 }
@@ -24,11 +20,6 @@ func div(x, n int) bool {
 
 func compare(x, n int) bool {
 	return x > n
-}
-
-func TestShift(t *testing.T) {
-	t.Log(shift(2400, 12))
-	t.Log(shift(010000, 12))
 }
 
 func BenchmarkUIntToTimeHM(b *testing.B) {

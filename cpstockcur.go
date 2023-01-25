@@ -12,20 +12,21 @@ const (
 	StockCurHeaderCode StockCurHeaderType = iota
 	StockCurHeaderName
 	StockCurHeaderDelta
-	StockCurHeaderTime
+	StockCurHeaderTimeMinute
 	StockCurHeaderOpen
 	StockCurHeaderHigh
 	StockCurHeaderLow
-	StockCurHeaderSellBidding
-	StockCurHeaderBuyBidding
-	StockCurHeaderAccVolume
-	StockCurHeaderAccValue
-	StockCurHeaderClose
+	StockCurHeaderAskPrice
+	StockCurHeaderBidPrice
+	StockCurHeaderCmlVolume
+	StockCurHeaderCmlValue
+	StockCurHeaderClose  = iota + 2
 	StockCurHeaderVolume = iota + 5
-	StockCurHeaderSecond
-	StockCurHeaderConclusionType = iota + 12
-	StockCurHeaderAccSell
-	StockCurHeaderAccBuy
+	StockCurHeaderTimeSecond
+	StockCurHeaderPreMarketVolume = iota + 7
+	StockCurHeaderConclusionType  = iota + 11
+	StockCurHeaderCmlVolumeSell
+	StockCurHeaderCmlVolumeBuy
 )
 
 type ConclusionType rune

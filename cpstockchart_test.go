@@ -10,6 +10,8 @@ func TestCpStockChart(t *testing.T) {
 	defer ReleaseCOM()
 
 	c := CpStockChart{}
+	defer c.Release()
+
 	c.Create([]StockChartField{
 		StockChartFieldDate,
 		StockChartFieldTime,
@@ -37,5 +39,4 @@ func TestCpStockChart(t *testing.T) {
 	fmt.Println(CastSlice(c.GetDataArray(1, count), ToTimeHM))
 	fmt.Println(CastSlice(c.GetDataArray(2, count), ToInt64))
 
-	c.Release()
 }

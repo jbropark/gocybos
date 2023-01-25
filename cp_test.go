@@ -1,17 +1,18 @@
 package gocybos
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
 
 type MstReceiver struct {
-	t *testing.T
+	t        *testing.T
+	received bool
 }
 
 func (r *MstReceiver) Received() {
-	fmt.Println("Received: " + time.Now().String())
+	r.t.Log("Received: " + time.Now().String())
+	r.received = true
 }
 
 func TestCpMst(t *testing.T) {
@@ -23,18 +24,17 @@ func TestCpMst(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	mst.BindEvent(&MstReceiver{t})
+
+	rec := MstReceiver{t, false}
+	mst.BindEvent(&rec)
 
 	mst.SetInputValue(0, "A005930")
 	mst.Request()
-	fmt.Println("Request: " + time.Now().String())
+	t.Log("Request: " + time.Now().String())
+	time.Sleep(1 * time.Second)
 
-	// time.Sleep(5 * time.Second)
-
-	/*
-		for {
-			PumpWaitingMessages()
-		}
-
-	*/
+	t.Logf("Received: %v", rec.received)
+	if rec.received == false {
+		panic("Cannot receive response")
+	}
 }

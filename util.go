@@ -4,15 +4,7 @@ import (
 	"fmt"
 	ole "github.com/go-ole/go-ole"
 	"golang.org/x/sys/windows"
-	"runtime"
-	"syscall"
 	"time"
-	"unsafe"
-)
-
-var (
-	user32, _       = syscall.LoadLibrary("user32.dll")
-	pPeekMessage, _ = syscall.GetProcAddress(user32, "PeekMessageW")
 )
 
 func InitCOM() {
@@ -42,38 +34,6 @@ func IsUserAnAdmin() (bool, error) {
 		return false, fmt.Errorf("[error %d] Failed call IsUserAnAdmin", winErr)
 	}
 	return res != 0, nil
-}
-
-func PeekMessage(msg *ole.Msg, hwnd uint32, MsgFilterMin uint32, MsgFilterMax uint32, RemoveMsg uint32) (int32, error) {
-	r0, _, err := syscall.SyscallN(pPeekMessage,
-		uintptr(unsafe.Pointer(msg)),
-		uintptr(hwnd),
-		uintptr(MsgFilterMin),
-		uintptr(MsgFilterMax),
-		uintptr(RemoveMsg))
-
-	return int32(r0), err
-}
-
-func PumpWaitingMessages() int32 {
-	ret := int32(0)
-
-	var msg ole.Msg
-
-	runtime.LockOSThread()
-	for {
-		r, _ := PeekMessage(&msg, 0, 0, 0, 1)
-		if r == 0 {
-			break
-		}
-		if msg.Message == 0x0012 { // WM_QUIT
-			ret = int32(1)
-			break
-		}
-		ole.DispatchMessage(&msg)
-	}
-	runtime.UnlockOSThread()
-	return ret
 }
 
 func DateToUInt(date time.Time) uint64 {
@@ -128,4 +88,9 @@ func CastSlice[T any](vArray []*ole.VARIANT, cast func(*ole.VARIANT) T) []T {
 		ret[idx] = cast(vArray[idx])
 	}
 	return ret
+}
+
+func CombineDateAndTime(d time.Time, t time.Time) time.Time {
+	hour, min, sec := t.Clock()
+	return d.Add(time.Hour*time.Duration(hour) + time.Minute*time.Duration(min) + time.Second*time.Duration(sec))
 }

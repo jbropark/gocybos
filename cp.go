@@ -122,12 +122,12 @@ func eRelease(eUnknown *ole.IUnknown) int32 {
 
 func eGetIDsOfNames(args *uintptr) uint32 {
 	p := (*[6]int32)(unsafe.Pointer(args))
-	//this := (*ole.IDispatch)(unsafe.Pointer(uintptr(p[0])))
-	//iid := (*ole.GUID)(unsafe.Pointer(uintptr(p[1])))
+	// this := (*ole.IDispatch)(unsafe.Pointer(uintptr(p[0])))
+	// iid := (*ole.GUID)(unsafe.Pointer(uintptr(p[1])))
 
 	// wnames := *(*[]*uint16)(unsafe.Pointer(uintptr(p[2])))
 	nameLen := int(uintptr(p[3]))
-	//lcid := int(uintptr(p[4]))
+	// lcid := int(uintptr(p[4]))
 	pdisp := *(*[]int32)(unsafe.Pointer(uintptr(p[5])))
 	for n := 0; n < nameLen; n++ {
 		pdisp[n] = int32(n)
