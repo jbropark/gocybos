@@ -47,7 +47,7 @@ func UIntToDate(value uint64) time.Time {
 		time.Month(value/100%100),
 		int(value%100),
 		0, 0, 0, 0,
-		time.Local,
+		time.UTC,
 	)
 }
 
@@ -56,8 +56,12 @@ func UIntToTimeHM(value uint64) time.Time {
 		1, time.Month(1), 1,
 		int(value/1_00),
 		int(value%1_00),
-		0, 0, time.Local,
+		0, 0, time.UTC,
 	)
+}
+
+func ParseTimeHMSUInt(value uint64) (hour int, min int, sec int) {
+	return int(value / 1_00_00), int(value / 1_00 % 1_00), int(value % 1_00)
 }
 
 func UIntToTimeHMS(value uint64) time.Time {
@@ -66,7 +70,7 @@ func UIntToTimeHMS(value uint64) time.Time {
 		int(value/1_00_00),
 		int(value/1_00%1_00),
 		int(value%1_00),
-		0, time.Local,
+		0, time.UTC,
 	)
 }
 
@@ -90,7 +94,6 @@ func CastSlice[T any](vArray []*ole.VARIANT, cast func(*ole.VARIANT) T) []T {
 	return ret
 }
 
-func CombineDateAndTime(d time.Time, t time.Time) time.Time {
-	hour, min, sec := t.Clock()
-	return d.Add(time.Hour*time.Duration(hour) + time.Minute*time.Duration(min) + time.Second*time.Duration(sec))
+func NewDate(year int, month int, day int) time.Time {
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }

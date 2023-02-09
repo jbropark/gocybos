@@ -21,6 +21,12 @@ type CpTrait struct {
 	point    *ole.IConnectionPoint
 	callback CpReceiver
 	cookie   uint32
+
+	idSetInputValue  int32
+	idBlockRequest   int32
+	idGetHeaderValue int32
+	idGetDataValue   int32
+	idContinue       int32
 }
 
 type CpReceiver interface {
@@ -61,6 +67,13 @@ func (t *CpTrait) Create(name string) (err error) {
 
 	t.Object = &ole.Dispatch{Object: iDispatch}
 	t.name = name
+
+	t.idSetInputValue, _ = t.Object.GetId("SetInputValue")
+	t.idContinue, _ = t.Object.GetId("Continue")
+	t.idBlockRequest, _ = t.Object.GetId("BlockRequest")
+	t.idGetDataValue, _ = t.Object.GetId("GetDataValue")
+	t.idGetHeaderValue, _ = t.Object.GetId("GetHeaderValue")
+
 	return nil
 }
 
@@ -217,15 +230,23 @@ func (t *CpTrait) UnbindEvent() {
 // Refer: https://money2.daishin.com/e5/mboard/ptype_basic/HTS_Plus_Helper/DW_Basic_Read_Page.aspx?boardseq=284&seq=222&page=1&searchString=DibStatus&p=8839&v=8642&m=9508
 
 func (t *CpTrait) SetInputValue(iType int32, value any) {
-	t.Object.MustCall("SetInputValue", iType, value)
+	_, err := t.Object.Invoke(t.idSetInputValue, ole.DISPATCH_METHOD, []interface{}{iType, value})
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 
 func (t *CpTrait) Request() {
 	t.Object.MustCall("Request")
 }
 
-func (t *CpTrait) BlockRequest() *ole.VARIANT {
-	return t.Object.MustCall("BlockRequest")
+func (t *CpTrait) BlockRequest() (result *ole.VARIANT) {
+	result, err := t.Object.Invoke(t.idBlockRequest, ole.DISPATCH_METHOD, []interface{}{})
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 
 func (t *CpTrait) BlockRequest2(option int16) *ole.VARIANT {
@@ -244,12 +265,20 @@ func (t *CpTrait) Unsubscribe() {
 	t.Object.MustCall("Unsubscribe")
 }
 
-func (t *CpTrait) GetHeaderValue(hType int32) *ole.VARIANT {
-	return t.Object.MustCall("GetHeaderValue", hType)
+func (t *CpTrait) GetHeaderValue(hType int32) (result *ole.VARIANT) {
+	result, err := t.Object.Invoke(t.idGetHeaderValue, ole.DISPATCH_METHOD, []interface{}{hType})
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 
-func (t *CpTrait) GetDataValue(dType int32, index int32) *ole.VARIANT {
-	return t.Object.MustCall("GetDataValue", dType, index)
+func (t *CpTrait) GetDataValue(dType int32, index int32) (result *ole.VARIANT) {
+	result, err := t.Object.Invoke(t.idGetDataValue, ole.DISPATCH_METHOD, []interface{}{dType, index})
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 
 func (t *CpTrait) GetDibStatus() *ole.VARIANT {
@@ -260,8 +289,12 @@ func (t *CpTrait) GetDibMsg1() *ole.VARIANT {
 	return t.Object.MustCall("GetDibMsg1")
 }
 
-func (t *CpTrait) Continue() *ole.VARIANT {
-	return t.Object.MustGet("Continue")
+func (t *CpTrait) Continue() (result *ole.VARIANT) {
+	result, err := t.Object.Invoke(t.idContinue, ole.DISPATCH_PROPERTYGET, []interface{}{})
+	if err != nil {
+		panic(err)
+	}
+	return
 }
 
 func (t *CpTrait) Header() *ole.VARIANT {

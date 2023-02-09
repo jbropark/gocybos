@@ -23,6 +23,10 @@ func ToInt32(r *ole.VARIANT) int32 {
 	return int32(r.Val)
 }
 
+func ToUInt32(r *ole.VARIANT) uint32 {
+	return uint32(r.Val)
+}
+
 func ToStr(r *ole.VARIANT) string {
 	return r.ToString()
 }

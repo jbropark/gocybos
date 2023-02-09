@@ -12,11 +12,12 @@ func TestCpStockChart(t *testing.T) {
 	c := CpStockChart{}
 	defer c.Release()
 
-	c.Create([]StockChartField{
+	fields := VariantInt32Slice([]StockChartField{
 		StockChartFieldDate,
 		StockChartFieldTime,
 		StockChartFieldClose,
 	})
+	c.Create(&fields)
 
 	c.SetInputCode("005930")
 	c.SetInputCountType(StockChartCountTypeNum)

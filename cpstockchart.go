@@ -73,9 +73,9 @@ const (
 	StockChartFieldPriceDelta
 	StockChartFieldVolume StockChartField = 1 + iota
 	StockChartFieldValue
-	StockChartFieldCmlVolumeSell // 호가 방식
-	StockChartFieldCmlVolumeBuy  // 호가 방식
-	StockChartFieldListedNum
+	StockChartFieldVolumeSellTotal // 호가 방식
+	StockChartFieldVolumeBuyTotal  // 호가 방식
+	StockChartFieldListedShare
 	StockChartFieldMarketCap
 	StockChartFieldPriceDeltaSign = 37
 )
@@ -101,7 +101,7 @@ const (
 	StockChartHeaderLow
 	StockChartHeaderValue
 	StockChartHeaderStatus
-	StockChartHeaderListedNum
+	StockChartHeaderListedShare
 	StockChartHeaderCapital // 자본금
 	StockChartHeaderPrevVolume
 	StockChartHeaderLastUpdateTimeHM
@@ -111,16 +111,16 @@ const (
 
 type CpStockChart struct {
 	CpTrait
-	fields ole.VARIANT
+	fields *ole.VARIANT
 }
 
-func (c *CpStockChart) Create(fields []StockChartField) {
+func (c *CpStockChart) Create(fields *ole.VARIANT) {
 	err := c.CpTrait.Create("CpSysDib.StockChart")
 	if err != nil {
 		panic(err)
 	}
-	c.fields = VariantInt32Slice(fields)
-	c.SetInputValue(stockChartInputFields, &c.fields)
+	c.fields = fields
+	c.SetInputValue(stockChartInputFields, c.fields)
 }
 
 func (c *CpStockChart) SetInputValue(iType stockChartInputType, value any) {
