@@ -19,7 +19,7 @@ func checkValid(vol int64, buy int64, sell int64, pre int64) {
 
 func (r *curLogReceiver) Received() {
 	r.t.Logf(
-		"[%s] Received: %s %s %v %v price {%v, %v, %v, %v[%v], %v[%v]} vol {%v (%v) +%v -%v %v} bid {+%v -%v}",
+		"[%s] Received: %s %s %v %v price {%v, %v, %v, %v[%v], %v[%v]} vol {%v (%v) b+%v b-%v c+%v c-%v %v} bid {+%v -%v}",
 		time.Now().Format(time.RFC3339),
 		ToStr(r.c.GetHeaderValue(StockCurHeaderCode)),
 		ToStr(r.c.GetHeaderValue(StockCurHeaderName)),
@@ -31,11 +31,13 @@ func (r *curLogReceiver) Received() {
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderClose)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderDelta)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolume)),
-		ToConclusionType(r.c.GetHeaderValue(StockCurHeaderConclusionType)),
+		ToConclusionType(r.c.GetHeaderValue(StockCurHeaderBidConclusionType)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeTotal)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderPreMarketVolume)),
-		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBuyTotal)),
-		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeSellTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBidBuyTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBidSellTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeConBuyTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeConSellTotal)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderValueTotal)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderBidPrice)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderAskPrice)),
@@ -44,8 +46,15 @@ func (r *curLogReceiver) Received() {
 	checkValid(
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeTotal)),
 		ToInt64(r.c.GetHeaderValue(StockCurHeaderPreMarketVolume)),
-		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBuyTotal)),
-		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeSellTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBidBuyTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeBidSellTotal)),
+	)
+
+	checkValid(
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderPreMarketVolume)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeConBuyTotal)),
+		ToInt64(r.c.GetHeaderValue(StockCurHeaderVolumeConSellTotal)),
 	)
 }
 

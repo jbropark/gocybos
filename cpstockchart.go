@@ -73,11 +73,13 @@ const (
 	StockChartFieldPriceDelta
 	StockChartFieldVolume StockChartField = 1 + iota
 	StockChartFieldValue
-	StockChartFieldVolumeSellTotal // 호가 방식
-	StockChartFieldVolumeBuyTotal  // 호가 방식
+	StockChartFieldVolumeBidSellTotal
+	StockChartFieldVolumeBidBuyTotal
 	StockChartFieldListedShare
 	StockChartFieldMarketCap
-	StockChartFieldPriceDeltaSign = 37
+	StockChartFieldPriceDeltaSign     = 37
+	StockChartFieldVolumeConSellTotal = 62
+	StockChartFieldVolumeConBuyTotal  = 63
 )
 
 type StockChartHeaderType int32

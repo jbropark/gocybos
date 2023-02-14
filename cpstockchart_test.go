@@ -15,7 +15,20 @@ func TestCpStockChart(t *testing.T) {
 	fields := VariantInt32Slice([]StockChartField{
 		StockChartFieldDate,
 		StockChartFieldTime,
+		StockChartFieldOpen,
+		StockChartFieldHigh,
+		StockChartFieldLow,
 		StockChartFieldClose,
+		StockChartFieldPriceDelta,
+		StockChartFieldVolume,
+		StockChartFieldValue,
+		StockChartFieldVolumeBidSellTotal,
+		StockChartFieldVolumeBidBuyTotal,
+		StockChartFieldListedShare,
+		StockChartFieldMarketCap,
+		StockChartFieldPriceDeltaSign,
+		StockChartFieldVolumeConSellTotal,
+		StockChartFieldVolumeConBuyTotal,
 	})
 	c.Create(&fields)
 
@@ -32,6 +45,7 @@ func TestCpStockChart(t *testing.T) {
 	c.BlockRequest()
 
 	fmt.Println(ToStr(c.GetHeaderValue(StockChartHeaderCode)))
+	fmt.Println(ToInt64(c.GetHeaderValue(StockChartHeaderFieldCount)))
 	fmt.Println(ToSS(c.GetHeaderValue(StockChartHeaderFieldNames)))
 	fmt.Println(ToDate(c.GetHeaderValue(StockChartHeaderLastTradeDay)))
 

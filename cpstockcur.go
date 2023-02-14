@@ -20,13 +20,19 @@ const (
 	StockCurHeaderBidPrice
 	StockCurHeaderVolumeTotal
 	StockCurHeaderValueTotal
-	StockCurHeaderClose  = iota + 2
-	StockCurHeaderVolume = iota + 5
+	StockCurHeaderClose = iota + 2
+
+	StockCurHeaderConConclusionType
+	StockCurHeaderVolumeConSellTotal
+	StockCurHeaderVolumeConBuyTotal
+
+	StockCurHeaderVolume = iota + 2
 	StockCurHeaderTimeHMS
-	StockCurHeaderPreMarketVolume = iota + 7
-	StockCurHeaderConclusionType  = iota + 11
-	StockCurHeaderVolumeSellTotal
-	StockCurHeaderVolumeBuyTotal
+
+	StockCurHeaderPreMarketVolume   = iota + 4
+	StockCurHeaderBidConclusionType = iota + 8
+	StockCurHeaderVolumeBidSellTotal
+	StockCurHeaderVolumeBidBuyTotal
 )
 
 type ConclusionType rune
