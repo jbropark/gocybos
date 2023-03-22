@@ -53,8 +53,8 @@ func (c *CpStockCur) Create() {
 	}
 }
 
-func (c *CpStockCur) SetInputCode(stockCode string) {
-	c.SetInputValue(StockCurInputCode, Stock(stockCode))
+func (c *CpStockCur) SetInputCode(code string) {
+	c.SetInputValue(StockCurInputCode, code)
 }
 
 func (c *CpStockCur) GetHeaderValue(hType StockCurHeaderType) *ole.VARIANT {

@@ -1,6 +1,8 @@
 package gocybos
 
-import "github.com/go-ole/go-ole"
+import (
+	"github.com/go-ole/go-ole"
+)
 
 func Stock(stockCode string) string {
 	if stockCode[0] == 'A' {
@@ -8,6 +10,14 @@ func Stock(stockCode string) string {
 	}
 
 	return "A" + stockCode
+}
+
+func StockIndex(indexCode string) string {
+	if indexCode[0] == 'U' {
+		return indexCode
+	}
+
+	return "U" + indexCode
 }
 
 func ToSS(r *ole.VARIANT) []string {
@@ -44,5 +54,13 @@ func ToUInt64(r *ole.VARIANT) uint64 {
 }
 
 func ToRune(r *ole.VARIANT) rune {
-	return rune(r.Val)
+	return r.Value().(rune)
+}
+
+func ToFloat32(r *ole.VARIANT) float32 {
+	return r.Value().(float32)
+}
+
+func ToFloat64(r *ole.VARIANT) float64 {
+	return r.Value().(float64)
 }

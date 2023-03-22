@@ -133,8 +133,8 @@ func (c *CpStockChart) GetHeaderValue(hType StockChartHeaderType) *ole.VARIANT {
 	return c.CpTrait.GetHeaderValue(int32(hType))
 }
 
-func (c *CpStockChart) SetInputCode(stockCode string) {
-	c.SetInputValue(stockChartInputCode, Stock(stockCode))
+func (c *CpStockChart) SetInputCode(code string) {
+	c.SetInputValue(stockChartInputCode, code)
 }
 
 func (c *CpStockChart) SetInputCountType(countType StockChartCountType) {

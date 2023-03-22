@@ -66,7 +66,7 @@ func TestCpStockCur(t *testing.T) {
 	cur.Create()
 	cur.BindEvent(&curLogReceiver{t, &cur})
 
-	cur.SetInputCode("005930")
+	cur.SetInputCode(Stock("005930"))
 	cur.Subscribe()
 
 	t.Log("Start Subscribing\n")
