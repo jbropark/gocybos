@@ -1,4 +1,4 @@
-module github.com/mathamp/gocybos
+module github.com/jbropark/gocybos
 
 go 1.19
 
